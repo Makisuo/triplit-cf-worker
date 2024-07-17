@@ -1,0 +1,16 @@
+{
+	"name": "triplit-cf-worker",
+	"scripts": {
+		"dev": "wrangler dev src/index.ts",
+		"deploy": "wrangler deploy --minify src/index.ts"
+	},
+	"dependencies": {
+		"@triplit/db": "^0.3.55",
+		"@triplit/server-core": "^0.3.57",
+		"hono": "^4.5.0"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20240712.0",
+		"wrangler": "^3.65.0"
+	}
+}
