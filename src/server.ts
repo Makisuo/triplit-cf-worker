@@ -8,10 +8,11 @@ import { jwt } from "hono/jwt"
 import { logger } from "./logger"
 
 import DurableObjectStore from "@triplit/db/storage/durable-object-tuple-store"
+import { MemoryArrayStorage } from "@triplit/db/storage/memory-array"
 import type { StatusCode } from "hono/utils/http-status"
 
 type EnvBindings = {
-	TRIPLIT_DB: DurableObjectNamespace
+	// TRIPLIT_DB: DurableObjectNamespace
 
 	JWT_SECRET: string
 	PROJECT_ID: string
@@ -32,11 +33,11 @@ export function createServer(options?: ServerOptions) {
 
 	const triplitServers = new Map<string, TriplitServer>()
 
-	function getServer(projectId: string, durableObject: any) {
+	function getServer(projectId: string) {
 		if (triplitServers.has(projectId)) return triplitServers.get(projectId)!
 		const server = new TriplitServer(
 			new DB({
-				source: new DurableObjectStore(durableObject),
+				source: new MemoryArrayStorage(),
 				tenantId: projectId,
 				clock: new DurableClock(),
 				...(options?.dbOptions ?? {}),
@@ -59,7 +60,7 @@ export function createServer(options?: ServerOptions) {
 		try {
 			const { message, options } = await c.req.json()
 			const { clientId } = options
-			const triplitServer = getServer(c.env.PROJECT_ID, c.env.TRIPLIT_DB)
+			const triplitServer = getServer(c.env.PROJECT_ID)
 			const session = triplitServer.getConnection(clientId)
 			if (!session) {
 				throw new Error("NO CONNECTION OPEN!")
@@ -78,7 +79,7 @@ export function createServer(options?: ServerOptions) {
 		const path = c.req.path.split("/").slice(2) as Route
 		const body = await c.req.json()
 		const token = c.get("jwtPayload")
-		const triplitServer = getServer(c.env.PROJECT_ID, c.env.TRIPLIT_DB)
+		const triplitServer = getServer(c.env.PROJECT_ID)
 		const { statusCode, payload } = await triplitServer.handleRequest(path, body, token)
 		return c.json(payload, statusCode as StatusCode)
 	})
@@ -99,7 +100,7 @@ export function createServer(options?: ServerOptions) {
 			return c.json({ error: "Unauthorized" }, 401)
 		}
 
-		const triplitServer = getServer(c.env.PROJECT_ID, c.env.TRIPLIT_DB)
+		const triplitServer = getServer(c.env.PROJECT_ID)
 		const connection = triplitServer.openConnection(token, {
 			clientId: client as string,
 			clientSchemaHash: schema ? Number.parseInt(schema as string) : undefined,

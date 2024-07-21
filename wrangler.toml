@@ -1,13 +1,20 @@
 name = "triplit-cf-worker"
 compatibility_date = "2024-07-17"
 
-[durable_objects]
-bindings = [{ name = "TRIPLIT_DB", class_name = "TriplitDurableObject" }]
+# [durable_objects]
+# bindings = [{ name = "TRIPLIT_DB", class_name = "DurableObjectStore" }]
 
 [vars]
 PROJECT_ID = "4c269993-6813-4efc-99e0-aff34adc9957"
 JWT_SECRET = "2f9a1a5b3c4d8e7f0g6h5i4j3k2l1m0n9o8p7q6r5s4t3u2v1w0x9y8z7"
 EXTERNAL_JWT_SECRET = "2f9a1a5b3c4d8e7f0g6h5i4j3k2l1m0n9o8p7q6r5s4t3u2v1w0x9y8z7"
+
+compatibility_flags = ["nodejs_compat"]
+
+
+# [[migrations]]
+# tag = "v1"                             # Should be unique for each entry
+# new_classes = ["DurableObjectStore"]
 
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
