@@ -5,6 +5,7 @@
 		"deploy": "wrangler deploy --minify src/index.ts"
 	},
 	"dependencies": {
+		"@biomejs/biome": "^1.8.3",
 		"@triplit/db": "^0.3.55",
 		"@triplit/server-core": "^0.3.57",
 		"hono": "^4.5.0"

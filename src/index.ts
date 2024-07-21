@@ -1,9 +1,11 @@
-import { Hono } from "hono";
+import { createServer } from "./server"
 
-const app = new Hono();
+console.log("Hono Running!")
 
-app.get("/", (c) => {
-	return c.text("I lub Lubby!");
-});
+const server = createServer({
+	verboseLogs: true,
+})
 
-export default app;
+console.log("Hono Running!")
+
+export default server
